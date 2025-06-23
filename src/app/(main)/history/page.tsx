@@ -72,37 +72,40 @@ const HistoryPage = () => {
         {loading ? (
           <div className="p-4 mt-6 border rounded-lg text-center">Loading...</div>
         ) : history.length === 0 ? (
-          <div className="rounded-lg flex flex-col items-center justify-center p-10 mt-6 transition-colors border border-sky-400 dark:border-[#2AB7C6] bg-[#F4F9FF] dark:bg-[#161B22]">
+          <div className="rounded-lg flex flex-col items-center justify-center mt-6 p-10 transition-colors border border-sky-400 dark:border-[#2AB7C6] bg-[#F4F9FF] dark:bg-[#161B22]">
             <p>You don't have any history yet</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             {history.map((item, index) => (
-              <div key={index} className="border rounded-lg p-4 dark:border-gray-700">
-                <p className="text-sm mb-2 text-gray-500 dark:text-gray-400">
+              <div key={index} className="border-2 border-sky-400 rounded-lg p-4 dark:border-[#2AB7C6]">
+                <p className="text-sm mb-2 text-black dark:text-white">
                   Model: {item.model_used?.join(", ")}
                 </p>
-                <p className="text-sm mb-2 text-gray-500 dark:text-gray-400">
+                <p className="text-sm mb-2 text-black dark:text-white">
                   Date: {item.date}
                 </p>
-                <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <div className="flex flex-col md:flex-row gap-4 mb-4 px-2 me-2">
                   <img
                     src={item.upload_url}
                     alt="Uploaded"
-                    className="w-full md:w-1/2 h-auto rounded border"
+                    className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]"
                   />
                   <img
                     src={item.result_url}
                     alt="Result"
-                    className="w-full md:w-1/2 h-auto rounded border"
+                    className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]"
                   />
                 </div>
+                <div className="flex justify-center items-center">
+
                 <button
                   onClick={() => handleDelete(item.date)}
-                  className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded"
+                  className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded cursor-pointer"
                 >
                   Delete
                 </button>
+                </div>
               </div>
             ))}
           </div>
