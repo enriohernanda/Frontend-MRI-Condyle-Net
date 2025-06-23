@@ -13,8 +13,10 @@ const Acknowledgment = () => {
       <motion.div className="md:w-1/2 text-center md:text-left" variants={slideInFromLeft(0.5)} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
         <h2 className="text-2xl md:text-5xl font-bold text-gray-200 mb-8">Acknowledgment</h2>
         <p className="text-gray-200 text-lg mt-4">
-          This poject is Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus,
-          sem quam semper libero
+          Thanks to the International Islamic University Malaysia (IIUM) for the collaboration with YARSI University in providing MRI data, as well as ethical support through IREC Approval No: IREC 2022-050. This greeting is also given to Chandra Prasetyo Utomo, M.S. as the supervising lecturer for his guidance and direction during this research process.
+        </p>
+        <p className="text-gray-200 text-lg mt-4">
+          Sincere gratitude is also expressed to the YARSI University Artificial Intelligence Laboratory team, as well as all colleagues who have provided support, both technically and academically, in carrying out this research.
         </p>
       </motion.div>
 
