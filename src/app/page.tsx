@@ -26,9 +26,9 @@ export default function Home() {
         <div id="Acknowledgment" className="w-full">
           <Acknowledgment />
         </div>
-        <div id="Publication" className="w-full">
+        {/* <div id="Publication" className="w-full">
           <Publication />
-        </div>
+        </div> */}
         <div id="Our-Team">
           <OurTeam />
         </div>
