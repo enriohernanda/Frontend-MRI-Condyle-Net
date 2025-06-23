@@ -11,6 +11,8 @@ const ProfileForm = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { profileUrl, setProfileUrl } = useUserContext();
 
+  const DEFAULT_IMAGE = 'http://localhost:3000/photos.png';
+
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem('token');
@@ -29,11 +31,10 @@ const ProfileForm = () => {
         if (res.ok) {
           setUsername(data.profile.username || '');
           setEmail(data.profile.email || '');
-          if (data.profile.profilePict) {
-            setProfileUrl(`http://localhost:5000/${data.profile.profilePict}`);
-          } else {
-            setProfileUrl('/photos.png');
-          }
+          const imagePath = data.profile.profilePict
+            ? `http://localhost:5000/${data.profile.profilePict}`
+            : DEFAULT_IMAGE;
+          setProfileUrl(imagePath);
         }
       } catch (err) {
         console.error('Error fetching profile:', err);
@@ -51,9 +52,31 @@ const ProfileForm = () => {
     }
   };
 
-  const handleDeleteImage = () => {
-    setSelectedFile(null);
-    setProfileUrl('/photos.png');
+  const handleDeleteImage = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const formData = new FormData();
+    formData.append('mytoken', token);
+
+    try {
+      const res = await fetch('http://localhost:5000/api/delete-profile-photo', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setProfileUrl(DEFAULT_IMAGE);
+        setSelectedFile(null);
+        setMessage(data.msg);
+      } else {
+        setMessage(data.msg || 'Failed to delete photo.');
+      }
+    } catch (err) {
+      console.error('Delete image error:', err);
+      setMessage('Error deleting profile photo.');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,9 +104,10 @@ const ProfileForm = () => {
 
       const data = await res.json();
       if (res.ok) {
-        if (data.profilePict) {
-          setProfileUrl(`http://localhost:5000/${data.profilePict}`);
-        }
+        const newProfileUrl = selectedFile
+          ? URL.createObjectURL(selectedFile)
+          : profileUrl;
+        setProfileUrl(newProfileUrl);
         setMessage('Profile updated successfully!');
       } else {
         setMessage(data.msg || 'Update failed.');
@@ -95,35 +119,24 @@ const ProfileForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-3xl mx-auto bg-white dark:bg-[#21262D] rounded-xl shadow-md px-6 py-10 text-center space-y-6">
-      {/* PROFILE IMAGE */}
+    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto bg-white dark:bg-[#21262D] rounded-xl shadow-md px-6 py-10 text-center space-y-6">
       <div className="flex justify-center">
-        <div className="relative w-32 h-32 rounded-full overflow-hidden">
+        <div className="relative w-32 h-32 rounded-full overflow-hidden group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
           <img
-            src={profileUrl || '/photos.png'}
+            src={profileUrl}
             alt="Profile"
+            onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE)}
             className="w-full h-full object-cover rounded-full border-2 border-gray-300 dark:border-gray-600"
           />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="absolute inset-0 bg-black bg-opacity-30 rounded-full flex items-center justify-center text-white hover:bg-opacity-50 cursor-pointer"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition duration-200">
+            <svg className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition duration-200" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
-          </button>
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            onChange={handleImageChange}
-            className="hidden"
-          />
+          </div>
+          <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
         </div>
       </div>
 
-      {/* FORM INPUTS */}
       <div className="space-y-4 text-left">
         <div>
           <label className="font-semibold text-lg text-black dark:text-white">Name</label>
@@ -136,7 +149,6 @@ const ProfileForm = () => {
         </div>
       </div>
 
-      {/* BUTTONS */}
       <div className="flex justify-center space-x-4">
         <button type="button" onClick={handleDeleteImage} className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md cursor-pointer">
           Delete Photo
