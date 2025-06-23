@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
 
-const sections = ['About', 'AI-Model', 'Features', 'Acknowledgment', 'Publication', 'Our-Team'];
+const sections = ['About', 'AI-Model', 'Features', 'Acknowledgment', 'Our-Team'];
 
 const Navbar = () => {
   const [isSticky, setIsSticky] = useState(false);
