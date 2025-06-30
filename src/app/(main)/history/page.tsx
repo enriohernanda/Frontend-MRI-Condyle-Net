@@ -33,7 +33,7 @@ const HistoryPage = () => {
     formData.append("mytoken", token);
 
     try {
-      const res = await fetch("http://localhost:5000/api/get-history", {
+      const res = await fetch("https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/get-history", {
         method: "POST",
         body: formData,
       });
@@ -69,7 +69,7 @@ const HistoryPage = () => {
     formData.append("date", selectedDate);
 
     try {
-      const res = await fetch("http://localhost:5000/api/delete-history", {
+      const res = await fetch("https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/delete-history", {
         method: "POST",
         body: formData,
       });

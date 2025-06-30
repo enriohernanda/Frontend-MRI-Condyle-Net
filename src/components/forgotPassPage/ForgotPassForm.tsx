@@ -8,6 +8,7 @@ const ForgotPassForm = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [msg, setMsg] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -18,13 +19,14 @@ const ForgotPassForm = () => {
     e.preventDefault();
     setLoading(true);
     setMsg('');
+    setIsSuccess(false);
 
     try {
       const formData = new FormData();
       formData.append('email', email);
       formData.append('password', password);
 
-      const res = await fetch('http://127.0.0.1:5000/api/forget-password-check', {
+      const res = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/forget-password-check', {
         method: 'POST',
         body: formData,
       });
@@ -32,13 +34,17 @@ const ForgotPassForm = () => {
       const data = await res.json();
 
       if (res.ok) {
-        setMsg(data.msg); // e.g. Password successfully changed!
+        setMsg(data.msg || 'Password updated successfully!');
+        setIsSuccess(true);
+        setEmail('');
+        setPassword('');
       } else {
         setMsg(data.msg || 'Something went wrong.');
+        setIsSuccess(false);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setMsg('Failed to connect to the server.');
+      setIsSuccess(false);
     } finally {
       setLoading(false);
     }
@@ -49,24 +55,50 @@ const ForgotPassForm = () => {
       <h2 className="text-2xl lg:text-3xl font-bold text-[#3674B5] dark:text-[#D8D8D8] lg:mt-10">Forgot Password?</h2>
       <p className="text-black dark:text-[#D8D8D8] text-sm">Enter your email and new password</p>
       <form className="mt-6 flex flex-col space-y-4" onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" className="w-full p-2 rounded-2xl bg-[#D9D9D9] text-black" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full p-2 rounded-2xl bg-[#D9D9D9] text-black"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
         <div className="relative">
-          <input type={showPassword ? 'text' : 'password'} placeholder="Password" className="w-full p-2 rounded-2xl bg-[#D9D9D9] text-black" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <button type="button" onClick={togglePasswordVisibility} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="New Password"
+            className="w-full p-2 rounded-2xl bg-[#D9D9D9] text-black"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+          >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
 
-        <button type="submit" disabled={loading} className="w-full bg-[#3674B5] dark:bg-[#0D1117] text-white p-3 rounded-md hover:bg-sky-700 transition duration-200 cursor-pointer disabled:opacity-50">
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#3674B5] dark:bg-[#0D1117] text-white p-3 rounded-md hover:bg-sky-700 transition duration-200 cursor-pointer disabled:opacity-50"
+        >
           {loading ? 'Processing...' : 'Change Password'}
         </button>
 
         <a href="/login" className="text-[#578FCA] hover:text-sky-500 transition duration-200 text-sm mt-1">
-          back
+          Back to Login
         </a>
 
-        {msg && <p className="mt-2 text-center text-sm text-red-500">{msg}</p>}
+        {msg && (
+          <p className={`mt-2 text-center text-sm ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
+            {msg}
+          </p>
+        )}
       </form>
     </div>
   );

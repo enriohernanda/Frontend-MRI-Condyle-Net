@@ -26,7 +26,7 @@ const RegisterForm = () => {
       formData.append('email', email);
       formData.append('password', password);
 
-      const response = await fetch('http://127.0.0.1:5000/api/register', {
+      const response = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/register', {
         method: 'POST',
         body: formData,
       });

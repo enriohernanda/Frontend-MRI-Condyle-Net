@@ -9,14 +9,36 @@ import { useUserContext } from '@/context/UserContext';
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
-  const { profileUrl, setProfileUrl } = useUserContext();
+  const { profileUrl, setProfileUrl, setUsername } = useUserContext();
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setProfileUrl('/photos.png');
+      setUsername('');
+      router.push('/login');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('mytoken', token);
+
+    try {
+      await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/logout', {
+        method: 'POST',
+        body: formData,
+      });
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+
     localStorage.removeItem('token');
     localStorage.removeItem('profileUrl');
-    setProfileUrl('http://localhost:3000/photos.png');
+    localStorage.removeItem('username');
+    setProfileUrl('/photos.png');
+    setUsername('');
     router.push('/login');
   };
 
@@ -29,30 +51,32 @@ const Navbar = () => {
       formData.append('mytoken', token);
 
       try {
-        const res = await fetch('http://localhost:5000/api/get-profile', {
+        const res = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/get-profile', {
           method: 'POST',
           body: formData,
         });
 
-        const data = await res.json();
-        if (res.ok) {
-          if (data.profile?.profilePict) {
-            const fullUrl = `http://localhost:5000/${data.profile.profilePict}`;
-            setProfileUrl(fullUrl);
-            localStorage.setItem('profileUrl', fullUrl);
-          } else {
-            const defaultUrl = 'http://localhost:3000/photos.png';
-            setProfileUrl(defaultUrl);
-            localStorage.setItem('profileUrl', defaultUrl);
-          }
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('Fetch profile failed:', errorText);
+          return;
         }
+
+        const data = await res.json();
+        const imageUrl = data.profile?.profilePict || '/photos.png';
+        const name = data.profile?.username || '';
+
+        setProfileUrl(imageUrl);
+        localStorage.setItem('profileUrl', imageUrl);
+        setUsername(name);
+        localStorage.setItem('username', name);
       } catch (err) {
-        console.error('Error fetching profile:', err);
+        console.error('Fetch profile error:', err);
       }
     };
 
     fetchProfile();
-  }, [setProfileUrl]);
+  }, [setProfileUrl, setUsername]);
 
   return (
     <nav className="flex justify-between items-center px-6 py-4 bg-[#578FCA] dark:bg-[#161B22] shadow-md">
@@ -71,7 +95,7 @@ const Navbar = () => {
               <img
                 src={profileUrl}
                 alt="User Profile"
-                onError={(e) => (e.currentTarget.src = 'http://localhost:3000/photos.png')}
+                onError={(e) => (e.currentTarget.src = '/photos.png')}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -79,7 +103,7 @@ const Navbar = () => {
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-36 bg-[#578FCA] dark:bg-[#161B22] rounded-lg shadow-lg overflow-hidden">
+            <div className="absolute right-0 mt-2 w-36 bg-[#578FCA] dark:bg-[#161B22] rounded-lg shadow-lg overflow-hidden z-50">
               <button
                 onClick={() => router.push('/profile')}
                 className="block w-full text-left px-4 py-2 text-white hover:bg-[#5774ca] dark:hover:bg-[#30363D] cursor-pointer"

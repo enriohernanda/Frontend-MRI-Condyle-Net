@@ -15,9 +15,9 @@ const modelOptions = [
 
 const UploadPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
-  const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [resultImageUrls, setResultImageUrls] = useState<string[]>([]);
   const [message, setMessage] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -27,10 +27,13 @@ const UploadPage = () => {
   const handleFileSelect = () => fileInputRef.current?.click();
 
   const handleFiles = (files: File[]) => {
-    const imageFile = files.find((file) => ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type));
-    if (imageFile) {
-      setSelectedImage(imageFile);
-      setImagePreviewUrl(URL.createObjectURL(imageFile));
+    const imageFiles = files.filter(file =>
+      ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)
+    );
+
+    if (imageFiles.length > 0) {
+      setSelectedImages(imageFiles);
+      setImagePreviewUrls(imageFiles.map(file => URL.createObjectURL(file)));
     }
   };
 
@@ -54,7 +57,7 @@ const UploadPage = () => {
   };
 
   const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
+    setIsDropdownOpen(prev => !prev);
   };
 
   const handleModelSelect = (id: number) => {
@@ -63,14 +66,14 @@ const UploadPage = () => {
   };
 
   const handleDelete = () => {
-    setSelectedImage(null);
-    setImagePreviewUrl(null);
-    setResultImageUrl(null);
+    setSelectedImages([]);
+    setImagePreviewUrls([]);
+    setResultImageUrls([]);
   };
 
   const handleUpload = async () => {
-    if (!selectedImage || !selectedModel) {
-      alert('Select the image and model first.');
+    if (selectedImages.length === 0 || !selectedModel) {
+      alert('Select image(s) and model first.');
       return;
     }
 
@@ -81,20 +84,23 @@ const UploadPage = () => {
     }
 
     const formData = new FormData();
-    formData.append('image', selectedImage);
+    selectedImages.forEach((img, index) => {
+      formData.append('images', img); // backend harus pakai request.files.getlist('images')
+    });
     formData.append('model', selectedModel.toString());
     formData.append('mytoken', token);
 
     try {
       setIsUploading(true);
-      const response = await fetch('http://127.0.0.1:5000/api/predict', {
+      const response = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/predict', {
         method: 'POST',
         body: formData,
       });
 
       const result = await response.json();
       if (result.status === 'success') {
-        setResultImageUrl(`${result.result_url}`);
+        // result.result_urls harus berupa list URL dari backend
+        setResultImageUrls(result.result_urls || []);
       } else {
         alert(result.message || 'An error occurred while uploading.');
       }
@@ -134,7 +140,7 @@ const UploadPage = () => {
         )}
       </div>
 
-      {/* Drag & Drop Area */}
+      {/* Drag & Drop */}
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -149,32 +155,40 @@ const UploadPage = () => {
         <div className="flex gap-4 flex-wrap justify-center">
           <button onClick={handleFileSelect} className="flex items-center gap-2 bg-[#3674B5] dark:bg-[#161B22] text-white py-2 px-4 rounded hover:bg-[#2a5f9e] border border-sky-600 dark:border-[#2AB7C6] cursor-pointer">
             <Image src="/file.png" alt="File Icon" width={20} height={20} />
-            Select file
+            Select files
           </button>
         </div>
         <input type="file" accept=".png,.jpg,.jpeg" multiple ref={fileInputRef} onChange={handleFilesChange} className="hidden" />
       </div>
 
       {/* Preview & Upload */}
-      {imagePreviewUrl && (
-        <div className="mt-5 flex flex-col items-center">
-          <img src={imagePreviewUrl} alt="Preview" className="max-w-full max-h-96 rounded shadow-md mb-4" />
-          <div className="flex gap-4">
+      {imagePreviewUrls.length > 0 && (
+        <div className="mt-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {imagePreviewUrls.map((url, idx) => (
+              <img key={idx} src={url} alt={`Preview ${idx}`} className="max-h-60 rounded shadow-md object-contain" />
+            ))}
+          </div>
+          <div className="flex gap-4 mt-4 justify-center">
             <button onClick={handleUpload} disabled={isUploading} className="bg-[#3674B5] dark:bg-[#161B22] hover:bg-[#2a5f9e] text-white px-4 rounded transition border border-sky-600 dark:border-[#2AB7C6] cursor-pointer">
               {isUploading ? 'Uploading...' : 'Upload & Predict'}
             </button>
             <button onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white px-4 rounded transition cursor-pointer">
-              Delete
+              Delete All
             </button>
           </div>
         </div>
       )}
 
       {/* Result Preview */}
-      {resultImageUrl && (
+      {resultImageUrls.length > 0 && (
         <div className="mt-6">
           <h2 className="text-xl font-bold mb-2">Segmentation Results:</h2>
-          <img src={resultImageUrl} alt="Segmented Result" className="rounded shadow-md max-w-full" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {resultImageUrls.map((url, idx) => (
+              <img key={idx} src={url} alt={`Result ${idx}`} className="rounded shadow-md max-w-full object-contain" />
+            ))}
+          </div>
         </div>
       )}
     </div>
