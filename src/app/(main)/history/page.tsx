@@ -33,10 +33,13 @@ const HistoryPage = () => {
     formData.append("mytoken", token);
 
     try {
-      const res = await fetch("https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/get-history", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch(
+        "https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/get-history",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       const data = await res.json();
       if (res.ok) {
         setHistory(data.history || []);
@@ -60,32 +63,36 @@ const HistoryPage = () => {
     setShowConfirm(false);
   };
 
-  const handleDeleteConfirmed = async () => {
-    const token = localStorage.getItem("token");
-    if (!token || !selectedDate) return;
+const handleDeleteConfirmed = async () => {
+  const token = localStorage.getItem("token");
+  if (!token || !selectedDate) return;
 
-    const formData = new FormData();
-    formData.append("mytoken", token);
-    formData.append("date", selectedDate);
+  const formData = new FormData();
+  formData.append("mytoken", token);
+  formData.append("date", selectedDate);
 
-    try {
-      const res = await fetch("https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/delete-history", {
+  try {
+    const res = await fetch(
+      "https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/delete-history",
+      {
         method: "POST",
         body: formData,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setHistory((prev) => prev.filter((item) => item.date !== selectedDate));
-      } else {
-        console.error("Gagal hapus:", data.msg);
       }
-    } catch (err) {
-      console.error("Error saat hapus:", err);
-    } finally {
-      setShowConfirm(false);
-      setSelectedDate(null);
+    );
+    const data = await res.json();
+    if (res.ok) {
+      await fetchHistory(); // ambil ulang dari backend
+    } else {
+      console.error("Gagal hapus:", data.msg);
     }
-  };
+  } catch (err) {
+    console.error("Error saat hapus:", err);
+  } finally {
+    setShowConfirm(false);
+    setSelectedDate(null);
+  }
+};
+
 
   useEffect(() => {
     fetchHistory();
@@ -95,8 +102,20 @@ const HistoryPage = () => {
     <div className="w-full h-full px-4 py-2 text-black dark:text-white">
       <div className="mb-4">
         <h1 className="text-3xl font-bold flex items-center gap-2">
-          <Image src="/history-blue.png" alt="History Light" width={32} height={32} className="block dark:hidden" />
-          <Image src="/history-white.png" alt="History Dark" width={32} height={32} className="hidden dark:block" />
+          <Image
+            src="/history-blue.png"
+            alt="History Light"
+            width={32}
+            height={32}
+            className="block dark:hidden"
+          />
+          <Image
+            src="/history-white.png"
+            alt="History Dark"
+            width={32}
+            height={32}
+            className="hidden dark:block"
+          />
           History
         </h1>
 
@@ -109,21 +128,28 @@ const HistoryPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             {history.map((item) => (
-              <div key={item.date} className="border-2 border-sky-400 rounded-lg p-4 dark:border-[#2AB7C6]">
+              <div
+                key={`${item.date}-${item.result_url}`}
+                className="border-2 border-sky-400 rounded-lg p-4 dark:border-[#2AB7C6]"
+              >
                 <p className="text-sm mb-2">
-                  Model: {Array.isArray(item.model_used)
-                    ? item.model_used.map((id) => modelIdToName[id] || `Unknown (${id})`).join(", ")
-                    : modelIdToName[item.model_used] || `Unknown (${item.model_used})`}
+                  Model:{" "}
+                  {Array.isArray(item.model_used)
+                    ? item.model_used
+                        .map((id) => modelIdToName[id] || `Unknown (${id})`)
+                        .join(", ")
+                    : modelIdToName[item.model_used] ||
+                      `Unknown (${item.model_used})`}
                 </p>
                 <p className="text-sm mb-2">Date: {item.date}</p>
                 <div className="flex flex-col md:flex-row gap-4 mb-4 px-2 me-2">
                   <img
-                    src={item.upload_url}
+                    src={`https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/static/${item.upload_url}`}
                     alt="Uploaded"
                     className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]"
                   />
                   <img
-                    src={item.result_url}
+                    src={`https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/static/${item.result_url}`}
                     alt="Result"
                     className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]"
                   />
