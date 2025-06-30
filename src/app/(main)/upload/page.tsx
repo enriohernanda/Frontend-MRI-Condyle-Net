@@ -100,7 +100,12 @@ const UploadPage = () => {
       const result = await response.json();
       if (result.status === 'success') {
         // result.result_urls harus berupa list URL dari backend
-        setResultImageUrls(result.result_urls || []);
+        setResultImageUrls(
+        (result.result_urls || []).map(
+          (url: string) => `https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/static/${url}`
+        )
+      );
+
       } else {
         alert(result.message || 'An error occurred while uploading.');
       }
