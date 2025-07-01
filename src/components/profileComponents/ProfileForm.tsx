@@ -36,11 +36,11 @@ const ProfileForm = () => {
         const data = await res.json();
         const fetchedUsername = data.profile?.username || '';
         const fetchedEmail = data.profile?.email || '';
-        const imagePath = data.profile?.filePict || DEFAULT_IMAGE;
+        const imagePath = data.profile?.profilePict || DEFAULT_IMAGE;
 
         setUsernameLocal(fetchedUsername);
         setEmail(fetchedEmail);
-        setProfileUrl(imagePath);
+        setProfileUrl(`https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/${imagePath}`);
         setUsername(fetchedUsername);
         localStorage.setItem('username', fetchedUsername);
         localStorage.setItem('profileUrl', imagePath);
@@ -122,6 +122,7 @@ const ProfileForm = () => {
       localStorage.setItem('profileUrl', savedImagePath);
       localStorage.setItem('username', username);
       setSelectedFile(null);
+      window.location.reload(); 
     } catch (error) {
       console.error('Upload error:', error);
     }
