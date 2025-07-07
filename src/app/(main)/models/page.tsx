@@ -4,7 +4,6 @@ import Image from 'next/image';
 const ModelsPage = () => {
   return (
     <div className="w-full min-h-screen px-4 sm:px-8 py-6 text-black dark:text-white">
-      {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
           {/* Gambar untuk light mode */}
@@ -26,7 +25,6 @@ const ModelsPage = () => {
           About Models
         </h1>
 
-        {/* Card Konten */}
         <div className="mt-6 p-6 sm:p-10 rounded-lg border-2 transition-colors border-sky-400 dark:border-[#2AB7C6] bg-[#F4F9FF] dark:bg-[#161B22]">
           <div className="space-y-4 text-sm sm:text-base leading-relaxed">
             <p>
@@ -49,7 +47,6 @@ const ModelsPage = () => {
               The experimental design was conducted by streaming MRI images to five segmentation models in parallel. Each model produces a mask map, which is then combined through majority voting to produce one final segmentation result. The final stage is morphological post-processing (one iteration of 3×3 dilation) to smooth object edges and fill small gaps between segments. This approach strengthens the consistency of predictions, reduces single-model errors, and improves segmentation robustness to noise.
             </p>
 
-            {/* Gambar SVG */}
             <div className="flex justify-center mt-6">
               <img
                 src="/Model.drawio.svg"
