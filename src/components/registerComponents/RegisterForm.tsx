@@ -26,7 +26,7 @@ const RegisterForm = () => {
       formData.append('email', email);
       formData.append('password', password);
 
-      const response = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/register', {
+      const response = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/register', {
         method: 'POST',
         body: formData,
       });
@@ -38,7 +38,6 @@ const RegisterForm = () => {
       } else {
         setSuccess(data.msg);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Something went wrong. Please try again later.');
     }
