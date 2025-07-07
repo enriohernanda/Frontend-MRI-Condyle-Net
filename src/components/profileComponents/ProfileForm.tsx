@@ -7,11 +7,12 @@ const ProfileForm = () => {
   const [username, setUsernameLocal] = useState('');
   const [email, setEmail] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [tempPreviewUrl, setTempPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { profileUrl, setProfileUrl, setUsername } = useUserContext();
 
   const DEFAULT_IMAGE = '/photos.png';
-  const API_BASE = 'https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app';
+  const API_BASE = 'https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app';
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -40,7 +41,7 @@ const ProfileForm = () => {
 
         setUsernameLocal(fetchedUsername);
         setEmail(fetchedEmail);
-        setProfileUrl(`https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/${imagePath}`);
+        setProfileUrl(`${API_BASE}/${imagePath}`);
         setUsername(fetchedUsername);
         localStorage.setItem('username', fetchedUsername);
         localStorage.setItem('profileUrl', imagePath);
@@ -57,7 +58,7 @@ const ProfileForm = () => {
     if (file) {
       setSelectedFile(file);
       const previewURL = URL.createObjectURL(file);
-      setProfileUrl(previewURL);
+      setTempPreviewUrl(previewURL);
     }
   };
 
@@ -69,7 +70,7 @@ const ProfileForm = () => {
     formData.append('mytoken', token);
 
     try {
-      const res = await fetch(`${API_BASE}/api/delete-profile-photo`, {
+      const res = await fetch(`${API_BASE}/api/profile/delete_photo`, {
         method: 'POST',
         body: formData,
       });
@@ -81,9 +82,10 @@ const ProfileForm = () => {
       }
 
       await res.json();
-      setProfileUrl(DEFAULT_IMAGE);
+      setProfileUrl(`${API_BASE}${DEFAULT_IMAGE}`);
       localStorage.setItem('profileUrl', DEFAULT_IMAGE);
       setSelectedFile(null);
+      setTempPreviewUrl(null);
     } catch (err) {
       console.error('Delete image error:', err);
     }
@@ -117,11 +119,12 @@ const ProfileForm = () => {
       const data = await res.json();
       const savedImagePath = data.filePict || DEFAULT_IMAGE;
 
-      setProfileUrl(savedImagePath);
+      setProfileUrl(`${API_BASE}/${savedImagePath}`);
       setUsername(username);
       localStorage.setItem('profileUrl', savedImagePath);
       localStorage.setItem('username', username);
       setSelectedFile(null);
+      setTempPreviewUrl(null);
       window.location.reload();
     } catch (error) {
       console.error('Upload error:', error);
@@ -129,31 +132,69 @@ const ProfileForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto bg-white dark:bg-[#21262D] rounded-xl shadow-md px-6 py-10 text-center space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-3xl mx-auto bg-white dark:bg-[#21262D] rounded-xl shadow-md px-6 py-10 text-center space-y-6"
+    >
       <div className="flex justify-center">
-        <div className="relative w-32 h-32 rounded-full overflow-hidden group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-          <img src={profileUrl} alt="Profile" onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE)} className="w-full h-full rounded-full border-2 border-gray-300 dark:border-gray-600" />
-          <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
+        <div
+          className="relative w-32 h-32 rounded-full overflow-hidden group cursor-pointer"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <img
+            src={tempPreviewUrl || profileUrl}
+            alt="Profile"
+            onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE)}
+            className="w-full h-full rounded-full border-2 border-gray-300 dark:border-gray-600"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            className="hidden"
+          />
         </div>
       </div>
 
       <div className="space-y-4 text-left">
         <div>
-          <label className="font-semibold text-lg text-black dark:text-white">Name</label>
-          <input type="text" value={username} onChange={(e) => setUsernameLocal(e.target.value)} className="w-full mt-1 p-2 rounded-md bg-gray-200 dark:bg-[#1B1F24] dark:text-white" />
+          <label className="font-semibold text-lg text-black dark:text-white">
+            Name
+          </label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsernameLocal(e.target.value)}
+            className="w-full mt-1 p-2 rounded-md bg-gray-200 dark:bg-[#1B1F24] dark:text-white"
+          />
         </div>
 
         <div>
-          <label className="font-semibold text-lg text-black dark:text-white">Email</label>
-          <input type="email" value={email} readOnly className="w-full mt-1 p-2 rounded-md bg-gray-100 dark:bg-[#2A2F36] text-gray-600 dark:text-gray-400 cursor-not-allowed" />
+          <label className="font-semibold text-lg text-black dark:text-white">
+            Email
+          </label>
+          <input
+            type="email"
+            value={email}
+            readOnly
+            className="w-full mt-1 p-2 rounded-md bg-gray-100 dark:bg-[#2A2F36] text-gray-600 dark:text-gray-400 cursor-not-allowed"
+          />
         </div>
       </div>
 
       <div className="flex justify-center space-x-4">
-        <button type="button" onClick={handleDeleteImage} className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md cursor-pointer">
+        <button
+          type="button"
+          onClick={handleDeleteImage}
+          className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md cursor-pointer"
+        >
           Delete Photo
         </button>
-        <button type="submit" className="px-6 py-2 bg-[#3674B5] dark:bg-[#161B22] text-white hover:bg-[#2a5f9e] border border-sky-600 dark:border-[#2AB7C6] rounded-md cursor-pointer">
+        <button
+          type="submit"
+          className="px-6 py-2 bg-[#3674B5] dark:bg-[#161B22] text-white hover:bg-[#2a5f9e] border border-sky-600 dark:border-[#2AB7C6] rounded-md cursor-pointer"
+        >
           Save Changes
         </button>
       </div>
