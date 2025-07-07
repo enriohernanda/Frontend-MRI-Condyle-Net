@@ -85,24 +85,23 @@ const UploadPage = () => {
 
     const formData = new FormData();
     selectedImages.forEach((img, index) => {
-      formData.append('images', img); // backend harus pakai request.files.getlist('images')
+      formData.append('images', img);
     });
     formData.append('model', selectedModel.toString());
     formData.append('mytoken', token);
 
     try {
       setIsUploading(true);
-      const response = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/predict', {
+      const response = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/predict', {
         method: 'POST',
         body: formData,
       });
 
       const result = await response.json();
       if (result.status === 'success') {
-        // result.result_urls harus berupa list URL dari backend
         setResultImageUrls(
         (result.result_urls || []).map(
-          (url: string) => `https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/static/${url}`
+          (url: string) => `https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/static/${url}`
         )
       );
 
