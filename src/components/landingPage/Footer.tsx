@@ -5,7 +5,6 @@ import { FaYoutube } from 'react-icons/fa';
 const Footer = () => {
   return (
     <div className="w-full bg-transparent text-gray-200 p-10">
-      {/* Bagian Atas - Sosial Media */}
       <div className="flex justify-between items-center border-b border-gray-800 pb-5">
         <div className="text-lg font-semibold text-gray-200">Follow us</div>
         <div className="flex space-x-4">
@@ -25,7 +24,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bagian Tengah - Informasi */}
       <div className="grid grid-cols-3 gap-10 py-10">
         {/* About */}
         <div>
@@ -112,7 +110,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bagian Bawah - Copyright */}
+      {/* Copyright */}
       <div className="border-t border-gray-800 pt-5 text-center">
         <p className="text-sm text-gray-600 space-x-4">&copy; MRICondyleNet Dev 2025 Inc. All rights reserved</p>
       </div>
