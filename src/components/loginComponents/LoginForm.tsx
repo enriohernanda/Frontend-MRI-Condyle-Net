@@ -20,7 +20,7 @@ const LoginForm = () => {
       formData.append('email', email);
       formData.append('password', password);
 
-      const response = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/login', {
+      const response = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/login', {
         method: 'POST',
         body: formData,
       });
@@ -34,10 +34,9 @@ const LoginForm = () => {
         setError(data.msg || 'Login failed');
       } else {
         console.log(data.token)
-        localStorage.setItem('token', data.token); // Simpan token
-        router.push('/upload'); // Redirect ke /upload
+        localStorage.setItem('token', data.token);
+        router.push('/upload'); 
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Something went wrong. Please try again later.');
     }
