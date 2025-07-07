@@ -11,13 +11,12 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Hanya jalan di client
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
       if (!token) {
         router.push('/login');
       } else {
-        setMounted(true); // render layout setelah cek selesai
+        setMounted(true);
       }
     }
   }, [router]);
