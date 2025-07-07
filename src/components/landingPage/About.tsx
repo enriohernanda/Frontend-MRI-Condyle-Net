@@ -23,7 +23,6 @@ const About = () => {
 
   return (
     <div className="relative flex items-center justify-center min-h-screen w-full h-full px-4 md:px-8 lg:px-16">
-      {/* Container with Border & Gradient Shadow */}
       <div
         className="relative z-20 flex flex-col items-center justify-center w-full h-auto p-8 
            shadow-teal-500/50 before:absolute before:inset-0 before:bg-gradient-to-r from-teal-500 to-cyan-500 before:blur-xl before:opacity-20"
