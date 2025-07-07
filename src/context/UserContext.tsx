@@ -1,72 +1,39 @@
 'use client';
 
-import React, {
-  createContext,
-  useState,
-  useContext,
-  ReactNode,
-  useEffect,
-  useCallback,
-} from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-interface UserContextType {
-  profileUrl: string;
-  setProfileUrl: (url: string) => void;
-  username: string;
-  setUsername: (name: string) => void;
-}
+const API_BASE = 'https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app';
+const DEFAULT_IMAGE = '/photos.png';
 
-const defaultProfileUrl = '/photos.png';
+export const UserContext = createContext<any>({});
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
-
-export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [profileUrl, setProfileUrlState] = useState<string>(defaultProfileUrl);
-  const [username, setUsernameState] = useState<string>('');
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+  const [profileUrl, setProfileUrlState] = useState<string>(DEFAULT_IMAGE);
+  const [username, setUsername] = useState<string>('');
 
   useEffect(() => {
-    // Jalankan hanya di client
-    if (typeof window !== 'undefined') {
-      const storedUrl = localStorage.getItem('profileUrl');
-      const storedName = localStorage.getItem('username');
-
-      if (storedUrl) setProfileUrlState(storedUrl);
-      if (storedName) setUsernameState(storedName);
-    }
+    const savedUrl = localStorage.getItem('profileUrl');
+    const savedUsername = localStorage.getItem('username');
+    if (savedUrl) setProfileUrlState(savedUrl);
+    if (savedUsername) setUsername(savedUsername);
   }, []);
 
   const setProfileUrl = useCallback((url: string) => {
-    setProfileUrlState(url);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('profileUrl', url);
-    }
+    const fullUrl = url.startsWith('http') ? url : `${API_BASE}/${url}`;
+    setProfileUrlState(fullUrl);
+    localStorage.setItem('profileUrl', fullUrl);
   }, []);
 
-  const setUsername = useCallback((name: string) => {
-    setUsernameState(name);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('username', name);
-    }
+  const setUsernameSafe = useCallback((name: string) => {
+    setUsername(name);
+    localStorage.setItem('username', name);
   }, []);
 
   return (
-    <UserContext.Provider
-      value={{
-        profileUrl,
-        setProfileUrl,
-        username,
-        setUsername,
-      }}
-    >
+    <UserContext.Provider value={{ profileUrl, setProfileUrl, username, setUsername: setUsernameSafe }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-export const useUserContext = (): UserContextType => {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error('useUserContext must be used within a UserProvider');
-  }
-  return context;
-};
+export const useUserContext = () => useContext(UserContext);
