@@ -33,7 +33,7 @@ const HistoryPage = () => {
     formData.append('mytoken', token);
 
     try {
-      const res = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/get-history', {
+      const res = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/get-history', {
         method: 'POST',
         body: formData,
       });
@@ -69,13 +69,13 @@ const HistoryPage = () => {
     formData.append('date', selectedDate);
 
     try {
-      const res = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/delete-history', {
+      const res = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/delete-history', {
         method: 'POST',
         body: formData,
       });
       const data = await res.json();
       if (res.ok) {
-        await fetchHistory(); // ambil ulang dari backend
+        await fetchHistory();
       } else {
         console.error('Gagal hapus:', data.msg);
       }
@@ -113,8 +113,8 @@ const HistoryPage = () => {
                 <p className="text-sm mb-2">Model: {Array.isArray(item.model_used) ? item.model_used.map((id) => modelIdToName[id] || `Unknown (${id})`).join(', ') : modelIdToName[item.model_used] || `Unknown (${item.model_used})`}</p>
                 <p className="text-sm mb-2">Date: {item.date}</p>
                 <div className="flex flex-col md:flex-row gap-4 mb-4 px-2 me-2">
-                  <img src={`https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/static/${item.upload_url}`} alt="Uploaded" className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]" />
-                  <img src={`https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/static/${item.result_url}`} alt="Result" className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]" />
+                  <img src={`https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/static/${item.upload_url}`} alt="Uploaded" className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]" />
+                  <img src={`https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/static/${item.result_url}`} alt="Result" className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]" />
                 </div>
                 <div className="flex justify-center">
                   <button onClick={() => confirmDelete(item.date)} className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded cursor-pointer">
