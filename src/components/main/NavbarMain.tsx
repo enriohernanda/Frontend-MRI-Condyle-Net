@@ -6,6 +6,9 @@ import { FaChevronDown } from 'react-icons/fa';
 import ThemeToggle from './ThemeToggle';
 import { useUserContext } from '@/context/UserContext';
 
+const API_BASE = 'https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app';
+const DEFAULT_IMAGE = '/photos.png';
+
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
@@ -16,7 +19,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     const token = localStorage.getItem('token');
     if (!token) {
-      setProfileUrl('/photos.png');
+      setProfileUrl(DEFAULT_IMAGE);
       setUsername('');
       router.push('/login');
       return;
@@ -26,10 +29,7 @@ const Navbar = () => {
     formData.append('mytoken', token);
 
     try {
-      await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/logout', {
-        method: 'POST',
-        body: formData,
-      });
+      await fetch(`${API_BASE}/api/logout`, { method: 'POST', body: formData });
     } catch (err) {
       console.error('Logout error:', err);
     }
@@ -37,41 +37,37 @@ const Navbar = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('profileUrl');
     localStorage.removeItem('username');
-    setProfileUrl('/photos.png');
+    setProfileUrl(DEFAULT_IMAGE);
     setUsername('');
     router.push('/login');
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
+    const fetchProfile = async () => {
       const formData = new FormData();
       formData.append('mytoken', token);
-
       try {
-        const res = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/get-profile', {
+        const res = await fetch(`${API_BASE}/api/get-profile`, {
           method: 'POST',
           body: formData,
         });
 
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error('Fetch profile failed:', errorText);
-          return;
-        }
-
+        if (!res.ok) return;
         const data = await res.json();
-        const imageUrl = data.profile?.profilePict || '/photos.png';
-        const name = data.profile?.username || '';
+        const image = data.profile?.profilePict || DEFAULT_IMAGE;
+        const imageUrl = image.startsWith('http') ? image : `${API_BASE}/${image}`;
 
         setProfileUrl(imageUrl);
         localStorage.setItem('profileUrl', imageUrl);
+
+        const name = data.profile?.username || '';
         setUsername(name);
         localStorage.setItem('username', name);
       } catch (err) {
-        console.error('Fetch profile error:', err);
+        console.error('Profile fetch failed:', err);
       }
     };
 
@@ -90,7 +86,7 @@ const Navbar = () => {
         <div className="relative">
           <button onClick={toggleDropdown} className="flex items-center text-lg gap-2 text-white">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-[#D9D9D9] flex items-center justify-center">
-              <img src={profileUrl} alt="User Profile" onError={(e) => (e.currentTarget.src = '/photos.png')} className="w-full h-full" />
+              <img src={profileUrl} alt="User" onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE)} className="w-full h-full" />
             </div>
             <FaChevronDown className={`cursor-pointer transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
