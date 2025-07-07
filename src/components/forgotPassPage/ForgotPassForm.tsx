@@ -26,7 +26,7 @@ const ForgotPassForm = () => {
       formData.append('email', email);
       formData.append('password', password);
 
-      const res = await fetch('https://6c1a-2a09-bac1-3480-18-00-3c5-3a.ngrok-free.app/api/forget-password-check', {
+      const res = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/forget-password-check', {
         method: 'POST',
         body: formData,
       });
