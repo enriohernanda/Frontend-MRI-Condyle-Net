@@ -4,6 +4,8 @@ import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import { FaChevronDown } from 'react-icons/fa';
 
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 const modelOptions = [
   { id: 1, name: 'Mask R-CNN' },
   { id: 2, name: 'Cascade Mask R-CNN' },
@@ -92,7 +94,7 @@ const UploadPage = () => {
 
     try {
       setIsUploading(true);
-      const response = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/predict', {
+      const response = await fetch(`${baseUrl}/api/predict`, {
         method: 'POST',
         body: formData,
       });
@@ -101,7 +103,7 @@ const UploadPage = () => {
       if (result.status === 'success') {
         setResultImageUrls(
         (result.result_urls || []).map(
-          (url: string) => `https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/static/${url}`
+          (url: string) => `${baseUrl}/static/${url}`
         )
       );
 
