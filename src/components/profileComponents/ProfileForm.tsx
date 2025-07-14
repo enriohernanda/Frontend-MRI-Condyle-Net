@@ -12,7 +12,7 @@ const ProfileForm = () => {
   const { profileUrl, setProfileUrl, setUsername } = useUserContext();
 
   const DEFAULT_IMAGE = '/photos.png';
-  const API_BASE = 'https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app';
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -91,6 +91,45 @@ const ProfileForm = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+  const confirmDelete = window.confirm("Are you sure you want to permanently delete your account?");
+  if (!confirmDelete) return;
+
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  const formData = new FormData();
+  formData.append('mytoken', token);
+
+  try {
+    const res = await fetch(`${API_BASE}/api/profile/delete_account`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("Account deleted successfully.");
+
+      // Hapus semua data dari localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+      localStorage.removeItem('profileUrl');
+
+      // Redirect ke halaman login atau landing
+      window.location.href = '/login';
+    } else {
+      console.error('Delete account failed:', data.msg);
+      alert(`Failed to delete account: ${data.msg}`);
+    }
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    alert('Something went wrong while deleting account.');
+  }
+};
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -145,7 +184,7 @@ const ProfileForm = () => {
             src={tempPreviewUrl || profileUrl}
             alt="Profile"
             onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE)}
-            className="w-full h-full rounded-full border-2 border-gray-300 dark:border-gray-600"
+            className="w-full h-full rounded-full border-2 border-gray-300 dark:border-gray-600 bg-[#D9D9D9]"
           />
           <input
             type="file"
@@ -183,20 +222,28 @@ const ProfileForm = () => {
         </div>
       </div>
 
-      <div className="flex justify-center space-x-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <button
           type="button"
           onClick={handleDeleteImage}
-          className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md cursor-pointer"
+          className="text-sm px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md whitespace-nowrap cursor-pointer"
         >
           Delete Photo
         </button>
         <button
+          type="button"
+          onClick={handleDeleteAccount}
+          className="text-sm px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md whitespace-nowrap cursor-pointer"
+        >
+          Delete Account
+        </button>
+        <button
           type="submit"
-          className="px-6 py-2 bg-[#3674B5] dark:bg-[#161B22] text-white hover:bg-[#2a5f9e] border border-sky-600 dark:border-[#2AB7C6] rounded-md cursor-pointer"
+          className="text-sm px-4 py-2 bg-[#3674B5] dark:bg-[#161B22] text-white hover:bg-[#2a5f9e] border border-sky-600 dark:border-[#2AB7C6] rounded-md whitespace-nowrap cursor-pointer"
         >
           Save Changes
         </button>
+
       </div>
     </form>
   );
