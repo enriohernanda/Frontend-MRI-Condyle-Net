@@ -12,6 +12,7 @@ const Sidebar = () => {
       <SidebarItem href="/upload" icon="/upload.png" text="Upload Data" pathname={pathname} />
       <SidebarItem href="/history" icon="/analytics.png" text="History" pathname={pathname} />
       <SidebarItem href="/models" icon="/models.png" text="About Models" pathname={pathname} />
+      <SidebarItem href="/guide" icon="/guide.png" text="Guide" pathname={pathname} />
     </aside>
   );
 };
