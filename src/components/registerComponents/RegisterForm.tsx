@@ -10,6 +10,8 @@ const RegisterForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -26,7 +28,7 @@ const RegisterForm = () => {
       formData.append('email', email);
       formData.append('password', password);
 
-      const response = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/register', {
+      const response = await fetch(`${baseUrl}/api/register`, {
         method: 'POST',
         body: formData,
       });
