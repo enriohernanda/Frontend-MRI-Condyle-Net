@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 type HistoryItem = {
   model_used: number[] | number;
   date: string;
@@ -25,6 +27,9 @@ const HistoryPage = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
+  const [searchDate, setSearchDate] = useState('');
+
+
   const fetchHistory = async () => {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -33,7 +38,7 @@ const HistoryPage = () => {
     formData.append('mytoken', token);
 
     try {
-      const res = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/get-history', {
+      const res = await fetch(`${baseUrl}/api/get-history`, {
         method: 'POST',
         body: formData,
       });
@@ -69,7 +74,7 @@ const HistoryPage = () => {
     formData.append('date', selectedDate);
 
     try {
-      const res = await fetch('https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/api/delete-history', {
+      const res = await fetch(`${baseUrl}/api/delete-history`, {
         method: 'POST',
         body: formData,
       });
@@ -87,6 +92,33 @@ const HistoryPage = () => {
     }
   };
 
+  const handleSearch = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const token = localStorage.getItem('token');
+  if (!token || !searchDate) return;
+
+  const formData = new FormData();
+  formData.append('mytoken', token);
+  formData.append('date', searchDate);
+
+  try {
+    const res = await fetch(`${baseUrl}/api/history/search`, {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setHistory(data.history || []);
+    } else {
+      console.error('Gagal cari:', data.msg);
+      setHistory([]); // kosongkan history jika tidak ketemu
+    }
+  } catch (err) {
+    console.error('Error saat cari:', err);
+  }
+};
+
+
   useEffect(() => {
     fetchHistory();
   }, []);
@@ -99,6 +131,24 @@ const HistoryPage = () => {
           <Image src="/history-white.png" alt="History Dark" width={32} height={32} className="hidden dark:block" />
           History
         </h1>
+        <form onSubmit={handleSearch} className="mt-6 flex flex-wrap gap-2 w-full">
+  <input
+    type="date"
+    value={searchDate}
+    onChange={(e) => setSearchDate(e.target.value)}
+    placeholder='Search by date'
+    className="flex-grow min-w-0 p-2 rounded-2xl bg-[#D9D9D9] dark:bg-[#1B1F24] dark:text-white cursor-pointer"
+    required
+  />
+  <button
+    type="submit"
+    className="w-full sm:w-auto px-4 py-2 bg-[#3674B5] dark:bg-[#161B22] text-white hover:bg-[#2a5f9e] border border-sky-600 dark:border-[#2AB7C6] rounded-2xl cursor-pointer"
+  >
+    Search
+  </button>
+</form>
+
+
 
         {loading ? (
           <div className="rounded-lg flex flex-col items-center justify-center mt-6 p-10 transition-colors border border-sky-400 dark:border-[#2AB7C6] bg-[#F4F9FF] dark:bg-[#161B22]">Loading...</div>
@@ -113,8 +163,8 @@ const HistoryPage = () => {
                 <p className="text-sm mb-2">Model: {Array.isArray(item.model_used) ? item.model_used.map((id) => modelIdToName[id] || `Unknown (${id})`).join(', ') : modelIdToName[item.model_used] || `Unknown (${item.model_used})`}</p>
                 <p className="text-sm mb-2">Date: {item.date}</p>
                 <div className="flex flex-col md:flex-row gap-4 mb-4 px-2 me-2">
-                  <img src={`https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/static/${item.upload_url}`} alt="Uploaded" className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]" />
-                  <img src={`https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app/static/${item.result_url}`} alt="Result" className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]" />
+                  <img src={`${baseUrl}/static/${item.upload_url}`} alt="Uploaded" className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]" />
+                  <img src={`${baseUrl}/static/${item.result_url}`} alt="Result" className="w-full md:w-1/2 h-auto rounded border border-sky-400 dark:border-[#2AB7C6]" />
                 </div>
                 <div className="flex justify-center">
                   <button onClick={() => confirmDelete(item.date)} className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded cursor-pointer">
