@@ -6,7 +6,6 @@ import Hero from '@/components/landingPage/Hero';
 import Model from '@/components/landingPage/Model';
 import Navbar from '@/components/landingPage/Navbar';
 import OurTeam from '@/components/landingPage/OurTeam';
-import Publication from '@/components/landingPage/Publication';
 
 export default function Home() {
   return (
@@ -26,9 +25,6 @@ export default function Home() {
         <div id="Acknowledgment" className="w-full">
           <Acknowledgment />
         </div>
-        {/* <div id="Publication" className="w-full">
-          <Publication />
-        </div> */}
         <div id="Our-Team">
           <OurTeam />
         </div>
