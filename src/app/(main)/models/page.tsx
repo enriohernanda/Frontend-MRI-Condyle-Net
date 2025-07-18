@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 
@@ -6,7 +8,7 @@ const ModelsPage = () => {
     <div className="w-full min-h-screen px-4 sm:px-8 py-6 text-black dark:text-white">
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-          {/* Gambar untuk light mode */}
+          {/* Icon Light Mode */}
           <Image
             src="/models-blue.png"
             alt="Models Icon Light"
@@ -14,7 +16,7 @@ const ModelsPage = () => {
             height={32}
             className="block dark:hidden"
           />
-          {/* Gambar untuk dark mode */}
+          {/* Icon Dark Mode */}
           <Image
             src="/models-white.png"
             alt="Models Icon Dark"
@@ -47,12 +49,28 @@ const ModelsPage = () => {
               The experimental design was conducted by streaming MRI images to five segmentation models in parallel. Each model produces a mask map, which is then combined through majority voting to produce one final segmentation result. The final stage is morphological post-processing (one iteration of 3×3 dilation) to smooth object edges and fill small gaps between segments. This approach strengthens the consistency of predictions, reduces single-model errors, and improves segmentation robustness to noise.
             </p>
 
-            <div className="flex justify-center mt-6">
-              <img
-                src="/Model.drawio.svg"
-                alt="Model Diagram"
-                className="w-full max-w-3xl h-auto"
-              />
+            <div className="flex justify-center">
+              <div className="relative w-full max-w-3xl aspect-[3/2] -mt-5 md:-mt-10">
+                <Image
+                  src="/architecture.png"
+                  alt="Model Diagram"
+                  fill
+                  unoptimized
+                  className="object-contain"
+                />
+              </div>
+            </div>
+            <h1 className='text-2xl font-bold md:-mt-11'>Model Performance</h1>
+            <div className="flex justify-center">
+              <div className="relative w-full max-w-3xl aspect-[3/2] -mt-10 md:-mt-25">
+                <Image
+                  src="/model-performance.jpg"
+                  alt="Model Diagram"
+                  fill
+                  unoptimized
+                  className="object-contain"
+                />
+              </div>
             </div>
           </div>
         </div>
