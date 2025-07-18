@@ -19,7 +19,7 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0); // ⬅️ Jumlah notifikasi baru
+  const [unreadCount, setUnreadCount] = useState(0); // Jumlah notifikasi baru
 
   const router = useRouter();
   const { profileUrl, setProfileUrl, setUsername } = useUserContext();
@@ -72,7 +72,7 @@ const Navbar = () => {
         setNotifications(allNotifs);
 
         const unread = allNotifs.filter((notif: Notification) => !notif.read).length;
-        setUnreadCount(0); // ⬅️ Reset karena dropdown dibuka
+        setUnreadCount(0); // Reset karena dropdown dibuka
         // Tandai sudah dibaca
         await fetch(`${API_BASE}/api/profile/notifications/mark_read`, {
           method: 'POST',
