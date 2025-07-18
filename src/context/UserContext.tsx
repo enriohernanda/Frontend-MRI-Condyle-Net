@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-const API_BASE = 'https://aecc-2a09-bac5-3a25-1d05-00-2e4-10.ngrok-free.app';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 const DEFAULT_IMAGE = '/photos.png';
 
 export const UserContext = createContext<any>({});
