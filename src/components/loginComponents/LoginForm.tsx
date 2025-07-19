@@ -39,10 +39,10 @@ const LoginForm = () => {
         localStorage.setItem('token', data.token);
         router.push('/upload'); 
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError('Something went wrong. Please try again later.');
-    }
+}
+
   };
 
   return (
