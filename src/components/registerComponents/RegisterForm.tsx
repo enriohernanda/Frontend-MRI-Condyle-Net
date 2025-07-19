@@ -41,6 +41,7 @@ const RegisterForm = () => {
         setSuccess(data.msg);
       }
     } catch (err) {
+      console.error(err);
       setError('Something went wrong. Please try again later.');
     }
   };
