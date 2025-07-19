@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { FaChevronDown } from 'react-icons/fa';
 import ThemeToggle from './ThemeToggle';
 import { useUserContext } from '@/context/UserContext';
+import Image from 'next/image';
+
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 const DEFAULT_IMAGE = '/photos.png';
@@ -149,7 +151,14 @@ const Navbar = () => {
   return (
     <nav className="flex justify-between items-center px-6 py-4 bg-[#578FCA] dark:bg-[#161B22] shadow-md relative">
       <div className="flex items-center">
-        <img src="/logo-MRICondyleNet.png" alt="Logo" className="h-8 md:h-10" />
+        <Image
+          src="/logo-MRICondyleNet.png"
+          alt="Logo"
+          width={40}
+          height={40}
+          className="h-8 md:h-10 w-auto"
+        />
+
         <span className="hidden md:block md:text-md lg:text-xl font-bold ml-2 text-white">
           MRICondyleNET
         </span>
@@ -158,12 +167,15 @@ const Navbar = () => {
       <div className="flex items-center gap-6 relative">
         {/* NOTIFIKASI */}
         <div className="relative">
-          <img
+          <Image
             src="/notif.png"
             alt="notif"
+            width={24}
+            height={24}
             className="w-6 cursor-pointer"
             onClick={toggleNotifDropdown}
           />
+
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 rounded-full">
               {unreadCount}
@@ -202,12 +214,17 @@ const Navbar = () => {
         <div className="relative">
           <button onClick={toggleDropdown} className="flex items-center text-lg gap-2 text-white">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-[#D9D9D9] flex items-center justify-center">
-              <img
-                src={profileUrl}
+              <Image
+                src={profileUrl || DEFAULT_IMAGE}
                 alt="User"
-                onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE)}
-                className="w-full h-full"
+                width={40}
+                height={40}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = DEFAULT_IMAGE;
+              }}
               />
+
             </div>
             <FaChevronDown
               className={`cursor-pointer transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
