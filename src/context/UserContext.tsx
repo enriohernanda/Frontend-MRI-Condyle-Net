@@ -5,7 +5,19 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 const DEFAULT_IMAGE = '/photos.png';
 
-export const UserContext = createContext<any>({});
+type UserContextType = {
+  profileUrl: string;
+  setProfileUrl: (url: string) => void;
+  username: string;
+  setUsername: (name: string) => void;
+};
+
+export const UserContext = createContext<UserContextType>({
+  profileUrl: DEFAULT_IMAGE,
+  setProfileUrl: () => {},
+  username: '',
+  setUsername: () => {},
+});
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [profileUrl, setProfileUrlState] = useState<string>(DEFAULT_IMAGE);
