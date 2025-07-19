@@ -60,6 +60,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ token }) => {
         setMsg(data.msg || 'Failed to reset password.');
       }
     } catch (err) {
+      console.error(err);
       setMsg('Server error. Please try again.');
     } finally {
       setLoading(false);
