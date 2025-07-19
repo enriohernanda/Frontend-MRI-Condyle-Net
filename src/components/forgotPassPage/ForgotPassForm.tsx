@@ -41,6 +41,7 @@ const ForgotPassForm = () => {
         setMsg(data.msg || 'Something went wrong.');
         setIsSuccess(false);
       }
+      
     } catch (err) {
       console.error(err);
       setMsg('Failed to connect to the server.');
