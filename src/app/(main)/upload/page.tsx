@@ -20,7 +20,6 @@ const UploadPage = () => {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
   const [resultImageUrls, setResultImageUrls] = useState<string[]>([]);
-  const [message, setMessage] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<number | null>(null);
@@ -81,12 +80,12 @@ const UploadPage = () => {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      setMessage('Unauthorized: No token found');
+      alert('Unauthorized: No token found');
       return;
     }
 
     const formData = new FormData();
-    selectedImages.forEach((img, index) => {
+    selectedImages.forEach((img) => {
       formData.append('images', img);
     });
     formData.append('model', selectedModel.toString());
@@ -172,7 +171,14 @@ const UploadPage = () => {
         <div className="mt-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {imagePreviewUrls.map((url, idx) => (
-              <img key={idx} src={url} alt={`Preview ${idx}`} className="max-h-60 rounded shadow-md object-contain" />
+              <Image
+                key={idx}
+                src={url}
+                alt={`Preview ${idx}`}
+                width={300}
+                height={300}
+                className="max-h-60 rounded shadow-md object-contain"
+              />
             ))}
           </div>
           <div className="flex gap-4 mt-4 justify-center">
@@ -192,7 +198,14 @@ const UploadPage = () => {
           <h2 className="text-xl font-bold mb-2">Segmentation Results:</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {resultImageUrls.map((url, idx) => (
-              <img key={idx} src={url} alt={`Result ${idx}`} className="rounded shadow-md max-w-full object-contain" />
+              <Image
+                key={idx}
+                src={url}
+                alt={`Result ${idx}`}
+                width={300}
+                height={300}
+                className="rounded shadow-md max-w-full object-contain"
+              />
             ))}
           </div>
         </div>
