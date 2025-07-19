@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { useUserContext } from '@/context/UserContext';
+import Image from 'next/image';
 
 const ProfileForm = () => {
   const [username, setUsernameLocal] = useState('');
@@ -51,7 +52,7 @@ const ProfileForm = () => {
     };
 
     fetchProfile();
-  }, [setProfileUrl, setUsername]);
+  }, [API_BASE, setProfileUrl, setUsername]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -180,11 +181,13 @@ const ProfileForm = () => {
           className="relative w-32 h-32 rounded-full overflow-hidden group cursor-pointer"
           onClick={() => fileInputRef.current?.click()}
         >
-          <img
-            src={tempPreviewUrl || profileUrl}
+          <Image
+            src={tempPreviewUrl || profileUrl || DEFAULT_IMAGE}
             alt="Profile"
             onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE)}
-            className="w-full h-full rounded-full border-2 border-gray-300 dark:border-gray-600 bg-[#D9D9D9]"
+            width={128}
+            height={128}
+            className="w-full h-full rounded-full border-2 border-gray-300 dark:border-gray-600 bg-[#D9D9D9] object-cover"
           />
           <input
             type="file"
