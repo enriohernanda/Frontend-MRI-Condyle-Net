@@ -70,10 +70,7 @@ const Navbar = () => {
         const allNotifs = data.notifications || [];
 
         setNotifications(allNotifs);
-
-        const unread = allNotifs.filter((notif: Notification) => !notif.read).length;
-        setUnreadCount(0); // Reset karena dropdown dibuka
-        // Tandai sudah dibaca
+        setUnreadCount(0);
         await fetch(`${API_BASE}/api/profile/notifications/mark_read`, {
           method: 'POST',
           body: formData,
