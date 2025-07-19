@@ -42,6 +42,7 @@ const ForgotPassForm = () => {
         setIsSuccess(false);
       }
     } catch (err) {
+      console.error(err);
       setMsg('Failed to connect to the server.');
       setIsSuccess(false);
     } finally {
