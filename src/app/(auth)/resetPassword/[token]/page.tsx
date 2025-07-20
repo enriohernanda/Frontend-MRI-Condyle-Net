@@ -2,11 +2,13 @@ import LeftBgLight from '@/components/LeftBgLight';
 import LogoBanner from '@/components/LogoBanner';
 import ResetPasswordPage from '@/components/resetPassPage/ResetPasswordPage';
 
-interface PageProps {
+interface Props {
   params: { token: string };
 }
 
-export default function Page({ params }: PageProps) {
+export default function Page({ params }: Props) {
+  const { token } = params;
+
   return (
     <div className="flex justify-center flex-col md:flex-row min-h-screen w-full 
                 bg-[#3674B5] 
@@ -15,7 +17,7 @@ export default function Page({ params }: PageProps) {
         <LogoBanner />
       </div>
       <LeftBgLight />
-      <ResetPasswordPage token={params.token} />
+      <ResetPasswordPage token={token} />
     </div>
   );
 }
