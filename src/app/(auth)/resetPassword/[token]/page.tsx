@@ -1,13 +1,13 @@
+'use client';
+
+import { useParams } from 'next/navigation';
 import LeftBgLight from '@/components/LeftBgLight';
 import LogoBanner from '@/components/LogoBanner';
 import ResetPasswordPage from '@/components/resetPassPage/ResetPasswordPage';
 
-interface Props {
-  params: { token: string };
-}
-
-export default function Page({ params }: Props) {
-  const { token } = params;
+export default function Page() {
+  const params = useParams();
+  const token = params.token as string;
 
   return (
     <div className="flex justify-center flex-col md:flex-row min-h-screen w-full 
