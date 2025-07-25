@@ -42,7 +42,7 @@ const ProfileForm = () => {
 
         setUsernameLocal(fetchedUsername);
         setEmail(fetchedEmail);
-        setProfileUrl(`${API_BASE}/${imagePath}`);
+        setProfileUrl(`${API_BASE}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`);
         setUsername(fetchedUsername);
         localStorage.setItem('username', fetchedUsername);
         localStorage.setItem('profileUrl', imagePath);
