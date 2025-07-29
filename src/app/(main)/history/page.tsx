@@ -131,11 +131,11 @@ const HistoryPage = () => {
 
         <form onSubmit={handleSearch} className="mt-6 flex flex-wrap gap-2 w-full">
           <input
-            type="date"
+            type="text"
             value={searchDate}
             onChange={(e) => setSearchDate(e.target.value)}
             placeholder="Search by date"
-            className="flex-grow min-w-0 p-2 rounded-2xl bg-[#D9D9D9] dark:bg-[#1B1F24] dark:text-white cursor-pointer"
+            className="date-input flex-grow min-w-0 p-2 rounded-2xl bg-[#D9D9D9] dark:bg-[#1B1F24] dark:text-white cursor-pointer pr-10"
             required
           />
           <button
